@@ -1,0 +1,10 @@
+displayName: Aheadinator
+summary: Captures upstream headers and sets response.
+
+type: middleware
+
+import: https://github.com/DogAndHerDude/aheadinator
+
+testData:
+  Headers:
+    X-Test: true
