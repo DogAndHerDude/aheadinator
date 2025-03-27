@@ -47,6 +47,8 @@ func (rw *responseWriter) Write(b []byte) (int, error) {
 }
 
 func (p *Aheadinator) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
+	log.Printf("Incoming request: %s %s\n", req.Method, req.URL.Path)
+	log.Printf("Headers: %v\n", req.Header)
 	rpw := &responseWriter{
 		ResponseWriter: rw,
 		headers:        make(http.Header),
@@ -54,20 +56,18 @@ func (p *Aheadinator) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 
 	p.next.ServeHTTP(rpw, req)
 
-	log.Printf("%+v\n", p.headerNameMap)
-
 	for header, v := range req.Header {
-		log.Printf("matchan headeran %s\n\n", header)
 		lHeader := strings.ToLower(header)
 		if p.headerNameMap[lHeader].OriginalFrom != "" {
-			log.Println("match")
 			if p.headerNameMap[lHeader].To != "" {
-				rw.Header().Set(p.headerNameMap[lHeader].To, v[0])
+				rpw.Header().Set(p.headerNameMap[lHeader].To, v[0])
 			} else {
-				rw.Header().Set(p.headerNameMap[lHeader].OriginalFrom, v[0])
+				rpw.Header().Set(p.headerNameMap[lHeader].OriginalFrom, v[0])
 			}
 		}
 	}
+
+	log.Printf("Upstream response headers: %v\n", rpw.headers)
 }
 
 func CreateConfig() *Config {
