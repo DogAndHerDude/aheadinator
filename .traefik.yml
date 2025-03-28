@@ -1,7 +1,7 @@
 displayName: Aheadinator
 summary: Captures upstream headers and sets response.
 type: middleware
-import: github.com/DogAndHerDude/aheadinator
+import: github.com/DogAndHerDude/plugin-aheadinator
 testData:
   headers:
     X-Test: true
