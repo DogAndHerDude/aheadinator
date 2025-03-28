@@ -3,8 +3,8 @@ package plugin_aheadinator
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/http"
+	"os"
 	"strings"
 )
 
@@ -47,8 +47,8 @@ func (rw *responseWriter) Write(b []byte) (int, error) {
 }
 
 func (p *Aheadinator) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
-	log.Printf("Incoming request: %s %s\n", req.Method, req.URL.Path)
-	log.Printf("Headers: %v\n", req.Header)
+	os.Stdout.WriteString("Incoming request " + fmt.Sprintf("%s %s", req.Method, req.URL.Path))
+	os.Stdout.WriteString("Headers: " + fmt.Sprintf("%+v", req.Header))
 	rpw := &responseWriter{
 		ResponseWriter: rw,
 		headers:        make(http.Header),
@@ -67,7 +67,7 @@ func (p *Aheadinator) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 		}
 	}
 
-	log.Printf("Upstream response headers: %v\n", rpw.headers)
+	os.Stdout.WriteString("Upstream response headers: " + fmt.Sprintf("%+v", rpw.headers))
 }
 
 func CreateConfig() *Config {
@@ -98,6 +98,8 @@ func New(ctx context.Context, next http.Handler, config *Config, name string) (h
 			return nil, fmt.Errorf("header map is does not match pattern name:new_name")
 		}
 	}
+
+	os.Stdout.WriteString("Aheadinator initiated")
 
 	return &Aheadinator{
 		next:          next,
