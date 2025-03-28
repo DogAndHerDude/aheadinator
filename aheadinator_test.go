@@ -1,4 +1,4 @@
-package plugin_aheadinator
+package aheadinator
 
 import (
 	"context"
